@@ -1,110 +1,105 @@
-# Job_Application_Status_Checker
+# Job Application Email Analyzer
 
-This Python application reads company names from your Excel file and checks your Gmail inbox for emails from those companies, then reports which companies you've received emails from.
+## Overview
+This tool helps you track and categorize emails related to your job applications. It connects to your Gmail account, searches for emails from companies in your job application spreadsheet, and automatically categorizes them as application confirmations, interview requests, rejections, or other messages. The tool supports both English and German language emails.
 
-## What It Does
+## Features
+- Automatically detects emails from companies you've applied to
+- Categorizes emails into:
+  - Application Submitted
+  - Interview Request
+  - Application Rejected
+  - Application Related
+  - Other
+- Extracts and displays full email content
+- Updates your job application Excel file with the latest status
+- Supports both English and German language emails
+- Provides manual review option to correct miscategorized emails
 
-- Reads company names from the "Company_Name" column in your Excel file
-- Searches your Gmail for emails from each of those companies
-- Shows you a list of which companies have emailed you and basic details about those emails
-- Also shows which companies haven't emailed you
+## Requirements
+- Python 3.6+
+- Google account with Gmail
+- Excel file with company names (format described below)
 
-## Setup Instructions
+## Dependencies
+```
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+pip install pandas openpyxl beautifulsoup4
+```
 
-### 1. Prepare Your Excel File
+## Setup
 
-Make sure your Excel file has a "Company_Name" column with all the companies you've applied to.
-
-### 2. Enable Gmail API
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+### 1. Create Google Cloud Project & Enable Gmail API
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project
-3. Search for "Gmail API" and enable it
-4. Go to "Credentials" and create an OAuth client ID
-   - Choose "Desktop application" as the application type
-   - Download the credentials file and rename it to `credentials.json`
-   - Place it in the same directory as the script
+3. Enable the Gmail API for your project
+4. Create OAuth 2.0 credentials (Desktop application)
+5. Download the credentials JSON file and save it as `credentials.json` in the same directory as this script
 
-### 3. Install Required Packages
+### 2. Prepare Your Excel File
+Create an Excel file with your job applications. The script expects a column named `Company_Name` containing the companies you've applied to.
 
-```bash
-pip install -r requirements.txt
+Example format:
+| Company_Name | Position | Date_Applied | ... |
+|--------------|----------|--------------|-----|
+| Google       | SWE      | 2025-01-15   | ... |
+| Microsoft    | Dev      | 2025-01-20   | ... |
+
+### 3. Update Configuration
+Edit these constants in the script:
+```python
+EXCEL_FILE_PATH = r"E:\Jobs\Applied Jobs.xlsx"  # Update with your Excel file path
+DAYS_TO_CHECK = 30  # How many days back to check for emails
 ```
 
-### 4. Run the Application
+## Usage
 
-```bash
-python simple_email_checker.py
+### Running the Script
+```
+python job_application_analyzer.py
 ```
 
-On first run, a browser window will open asking you to authorize the application to access your Gmail. 
+On first run, you'll need to authorize the application to access your Gmail account. A browser window will open for authentication.
 
-## How It Works
+### Workflow
+1. The script loads company names from your Excel file
+2. It searches your Gmail for emails from each company
+3. Emails are categorized based on content analysis
+4. Results are displayed in the console, organized by category
+5. You can optionally manually review and correct categories
+6. Your Excel file is updated with the latest application status
 
-1. The script reads company names from your Excel file
-2. For each company, it searches your Gmail for emails from that company
-3. It does this by looking for the company name in the sender's email address
-4. It also tries searching for the company name in email subjects as a fallback
-5. It displays a summary of all emails found and which companies haven't emailed
+### Email Categories
+- **Application Submitted**: Confirms your application was received
+- **Interview Request**: Invites you to an interview or next steps
+- **Application Rejected**: Indicates you were not selected
+- **Application Related**: Other messages related to your application
+- **Other**: Emails that don't fit the above categories
 
-## Customization
+## Troubleshooting
 
-You can modify these settings in the script:
-- `EXCEL_FILE_PATH`: Path to your job applications Excel file
-- `DAYS_TO_CHECK`: How many days back to check for emails (default is 30)
+### Authentication Issues
+- Ensure your `credentials.json` file is in the same directory as the script
+- If you get permission errors, delete the `token.json` file and run the script again
 
-## Example Output
+### Email Detection Problems
+- If emails aren't being found, try increasing the `DAYS_TO_CHECK` value
+- Company names in your Excel file should match email domains (e.g., "Google" for emails from "@google.com")
 
-```
-Starting Simple Company Email Checker...
-Loaded 5 companies to check.
-Checking emails from Google...
-  Found 3 emails from Google
-Checking emails from Microsoft...
-  Found 1 emails from Microsoft
-Checking emails from Amazon...
-  No emails found from or mentioning Amazon
-Checking emails from Meta...
-  Found 2 emails from Meta
-Checking emails from Apple...
-  No emails found from or mentioning Apple
+### Categorization Issues
+- If emails are miscategorized, use the manual review option
+- You can extend the keyword lists in the `categorize_email` function
 
-================================================================================
-RESULTS: COMPANY EMAIL CHECK
-================================================================================
-Found emails from 3 companies in the last 30 days:
+## Privacy & Security
+- This script runs locally on your machine
+- Your credentials and emails are not sent to any external servers
+- The script only reads your emails; it doesn't modify or delete them
 
-Google:
-  1. From: Google Careers <careers-noreply@google.com>
-     Subject: Thank you for your application
-     Date: 2025-04-18
+## Future Enhancements
+- Support for additional email providers
+- More detailed categorization
+- Automatic follow-up reminders
+- Statistical analysis of application outcomes
 
-  2. From: Google Hiring Team <hiring@google.com>
-     Subject: Next steps for your application
-     Date: 2025-04-20
-
-  3. From: Google Recruiting <recruiting@google.com>
-     Subject: Interview Invitation
-     Date: 2025-04-25
-
-Microsoft:
-  1. From: Microsoft Careers <careers@microsoft.com>
-     Subject: Application Received
-     Date: 2025-04-19
-
-Meta:
-  1. From: Meta Recruiting <recruiting@meta.com>
-     Subject: Thank you for your interest
-     Date: 2025-04-21
-
-  2. From: Meta Jobs <jobs@meta.com>
-     Subject: Application Status Update
-     Date: 2025-04-26
-
---------------------------------------------------------------------------------
-Companies with NO emails found:
-  - Amazon
-  - Apple
-
-Email check complete!
-```
+## License
+This project is for personal use. Feel free to modify it for your needs.
