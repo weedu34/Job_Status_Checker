@@ -56,7 +56,7 @@ DAYS_TO_CHECK = 30  # How many days back to check for emails
 
 ### Running the Script
 ```
-python job_application_analyzer.py
+python simple_email_checker.py
 ```
 
 On first run, you'll need to authorize the application to access your Gmail account. A browser window will open for authentication.
