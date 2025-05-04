@@ -1,4 +1,4 @@
-# Job_Application_Status_Checkor
+# Job_Application_Status_Checker
 
 This Python application reads company names from your Excel file and checks your Gmail inbox for emails from those companies, then reports which companies you've received emails from.
 
